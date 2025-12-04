@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
+
 import 'package:cinemapedia/config/constants/environment.dart';
 import 'package:cinemapedia/domain/datasources/movies_datadource.dart';
+
+import 'package:cinemapedia/infrastructure/mappers/movie_mapper.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
-import 'package:dio/dio.dart';
 
 class MoviedbDatasource extends MoviesDatadource {
   final dio = Dio(
@@ -16,9 +20,16 @@ class MoviedbDatasource extends MoviesDatadource {
 
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) async {
-    final Response = await dio.get('/movie/now_playing');
-    final List<Movie> movies = [];
+    final response = await dio.get('/movie/now_playing');
 
-    return [];
+    final movieDBRespoonse = MovieDbResponse.fromJson(response.data);
+
+    final List<Movie> movies = movieDBRespoonse.results
+    .where((moviedb) => moviedb.posterPath != 'no-poster')
+    .map(
+      (moviedb) => MovieMapper.movieDBToEntity(moviedb)
+    ).toList();
+
+    return movies;
   }
 }
