@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cinemapedia/config/helpers/human_formats.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MovieHorizontalListview extends StatelessWidget {
   final List<Movie> movies;
@@ -53,7 +55,6 @@ class _Slide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           //* Image
           SizedBox(
             width: 150,
@@ -67,7 +68,9 @@ class _Slide extends StatelessWidget {
                   if (loadingProgress != null) {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Center(child: const CircularProgressIndicator(strokeWidth: 2)),
+                      child: Center(
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      ),
                     );
                   }
                   return FadeIn(child: child);
@@ -81,24 +84,28 @@ class _Slide extends StatelessWidget {
           //* Title
           SizedBox(
             width: 150,
-            child: Text(
-              movie.title,
-              maxLines: 2,
-              style: textStyles.titleSmall,
-            ),
+            child: Text(movie.title, maxLines: 2, style: textStyles.titleSmall),
           ),
 
           //* Rating
-          Row(
-            children: [
-              Icon(Icons.star_half_outlined, color: Colors.yellow.shade800),
-              const SizedBox(width: 3),
-              Text('${( movie.voteAverage.toDouble() * 10).round() / 10 }', style: textStyles.bodyMedium?.copyWith(color: Colors.yellow.shade800)),
-              const SizedBox(width: 10),
-              Text('${movie.popularity}', style: textStyles.bodySmall,)
-            ],
-          )
-
+          SizedBox(
+            width: 150,
+            child: Row(
+              children: [
+                Icon(Icons.star_half_outlined, color: Colors.yellow.shade800),
+                const SizedBox(width: 3),
+                Text(
+                  '${(movie.voteAverage.toDouble() * 10).round() / 10}',
+                  style: textStyles.bodyMedium?.copyWith(
+                    color: Colors.yellow.shade800,
+                  ),
+                ),
+                // const SizedBox(width: 10),
+                Spacer(),
+                Text(HumanFormats.number(movie.popularity), style: textStyles.bodySmall,),
+              ],
+            ),
+          ),
         ],
       ),
     );
